@@ -3,11 +3,11 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const passport = require('./config/passport'); 
 const session = require('express-session');
-const authRoutes = require('./routes/auth'); 
 const login = require('./routes/login'); 
 const register = require('./routes/register'); 
 const authGoogleRoute = require('./routes/authGoogle'); 
 const userRoute = require('./routes/userRoute'); 
+const articleRoute = require('./routes/ArticleRoute'); 
 const cors = require('cors');
 
 
@@ -20,16 +20,13 @@ const app = express();
 
 app.use(cors());
 
-app.use(
-  session({
-    secret: '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',
-    resave: true,
-    saveUninitialized: true,
-  })
-);
-app.use('/', authRoutes);
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(
+//   session({
+//     secret: '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',
+//     resave: true,
+//     saveUninitialized: true,
+//   })
+// );
 
 dotenv.config({path : './env'});
 require('./config/connexion');
@@ -54,6 +51,7 @@ app.use('/',authGoogleRoute);
 
 app.use('/', userRoute);
 
+app.use('/', articleRoute);
 
 
 app.use((err, req, res, next) => {

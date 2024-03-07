@@ -1,137 +1,144 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { NavLink } from 'react-router-dom';
+import { Alert, Button, Label, Spinner, TextInput,Datepicker } from 'flowbite-react';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import OAuth from '../components/Oauth';
 
-const Register = () => {
+export default function SignUp() {
+  const [formData, setFormData] = useState({});
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const [errorMessage , setErrorMessage] = useState(null);
-
-  
-
-  const [user, setUser] = useState({
-    Firstname: "",
-    Lastname: "",
-    birthday: "",
-    email: "",
-    affiliation: "",
-    typeUser: "admin",
-    password: ""
-  });
-
-  const handleInput = (event) => {
-    let name = event.target.name;
-    let value = event.target.value;
-    setUser({ ...user, [name]: value })
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value.trim() });
   };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    console.log("Form Data:", user);
-
-    const { Firstname, Lastname, birthday, email, affiliation, typeUser, password } = user;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
    
     try {
+      setLoading(true);
+      setErrorMessage(null);
       const res = await fetch('/register', {
         method: 'POST',
-        headers: {
-          "content-type": "application/json"
-        },
-        body: JSON.stringify({
-          Firstname, Lastname, birthday, email, affiliation, typeUser, password,
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
       });
       const data = await res.json();
-      
-
-      if (res.ok) {
-        window.alert("Registered Successfully");
-        navigate('/login');
-      } else {
+      if (data.success === false) {
         return setErrorMessage(data.message);
       }
-    } catch (err) {
-      console.log("Error during registration:", err);
-      window.alert("An error occurred during registration. Please try again.");
+      setLoading(false);
+      if (res.ok) {
+        navigate('/login');
+      }
+    } catch (error) {
+      setErrorMessage(error.message);
+      setLoading(false);
     }
   };
-
   return (
-    <div>
-      <div className="container shadow my-5">
-        <div className="row justify-content-end">
-          <div className="col-md-5 d-flex flex-column align-items-center justify-content-center form order-2">
-            <h1 className="display-4 fw-bolder">Hello,Friend</h1>
-            <p className="lead text-center">Enter Your Details To Register</p>
-            <h5 className='mb-4'>OR</h5>
-            <NavLink to="/login" className="btn btn-outline-light rounded-pill pb-2 w-50">LOGIN</NavLink>
+    <div className='min-h-screen mt-20'>
+      <div className='flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-5'>
+        {/* left */}
+        <div className='flex-1'>
+          <Link to='/' className='font-bold dark:text-white text-4xl text-decoration-none'>
+            Lab
+            <span className='px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white'>
+              Management
+            </span>
 
-          </div>
-          <div className='col-md-6 p-5'>
-            <h1 className="display-6 fw-bolder mb-5">Register</h1>
-            <form onSubmit={handleSubmit} method='POST'>
-              <div className="mb-3">
-                <label htmlFor="firstname" className="form-label">First Name</label>
-                <input type="text" className="form-control" name="Firstname"
-                  value={user.Firstname} onChange={handleInput} />
-
-              </div>
-              <div className="mb-3">
-                <label htmlFor="lastname" className="form-label">Last Name</label>
-                <input type="text" className="form-control" name="Lastname"
-                  value={user.Lastname} onChange={handleInput} />
-
-              </div>
-              <div className="mb-3">
-                <label htmlFor="birthday" className="form-label">BirthDay</label>
-                <input type="date" className="form-control" name="birthday"
-                  value={user.birthday} onChange={handleInput} />
-
-              </div>
-              <div className="mb-3">
-                <label htmlFor="affiliation" className="form-label">Affiliation</label>
-                <input type="text" className="form-control" name="affiliation"
-                  value={user.affiliation} onChange={handleInput} />
-
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="typeUser" className="form-label">TypeUser</label>
-                <select id="typeUser" name="typeUser" className="form-select" value={user.typeUser} onChange={handleInput}>
-                  <option value="admin">Admin</option>
-                  <option value="guest">Guest</option>
-                  <option value="chercheur">Chercher</option>
-                </select>
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="email" className="form-label">Email address</label>
-                <input type="email" className="form-control" name="email"
-                  value={user.email} onChange={handleInput} />
-              </div>
-              <div className="mb-3">
-                <label htmlFor="password" className="form-label">Password</label>
-                <input type="password" className="form-control" name="password"
-                  value={user.password} onChange={handleInput} />
-              </div>
-
-              <div className="mb-3 form-check">
-                <input type="checkbox" className="form-check-input" id="exampleCheck1" />
-                <label className="form-check-label" htmlFor="exampleCheck1">I Agree Terms and Conditions</label>
-              </div>
-
-              <button type="submit" className="btn btn-outline-primary w-100 mt-4 rounded-pill">Register</button>
-              { errorMessage && ( <div class="alert alert-danger mt-4" role="alert">
-               {errorMessage}
-              </div>) }
-            </form>
-
-          </div>
+          </Link>
+          <p className='text-sm mt-5'>
+            This is a demo project. You can sign up with your email and password
+            or with Google.
+          </p>
         </div>
+        {/* right */}
 
+        <div className='flex-1'>
+          <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
+            <div>
+              <Label value='Your Firstname' />
+              <TextInput
+                type='text'
+                placeholder='Firstname'
+                name='Firstname'
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <Label value='Your Lastname' />
+              <TextInput
+                type='text'
+                placeholder='Lastname'
+                name='Lastname'
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <Label value='Your Affiliation' />
+              <TextInput
+                type='text'
+                placeholder='Affiliation'
+                name='affiliation'
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <Label value='Your birthdate' />
+              <Datepicker
+                placeholder='Select a date'
+                name='birthday'
+                onChange={handleChange}
+                className="your-custom-styles-here"
+              />
+            </div>
+            <div>
+              <Label value='Your email' />
+              <TextInput
+                type='email'
+                placeholder='name@company.com'
+                name='email'
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <Label value='Your password' />
+              <TextInput
+                type='password'
+                placeholder='Password'
+                name='password'
+                onChange={handleChange}
+              />
+            </div>
+            <Button
+              gradientDuoTone='purpleToPink'
+              type='submit'
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <Spinner size='sm' />
+                  <span className='pl-3'>Loading...</span>
+                </>
+              ) : (
+                'register'
+              )}
+            </Button>
+            <OAuth />
+          </form>
+          <div className='flex gap-2 text-sm mt-5'>
+            <span>Have an account?</span>
+            <Link to='/login' className='text-blue-500'>
+              Log In
+            </Link>
+          </div>
+          {errorMessage && (
+            <Alert className='mt-5' color='failure'>
+              {errorMessage}
+            </Alert>
+          )}
+        </div>
       </div>
     </div>
   );
-
 }
-
-export default Register;

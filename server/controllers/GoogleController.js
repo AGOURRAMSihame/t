@@ -7,7 +7,7 @@ const Google = async (req, res, next) =>{
   try{
     const user = await Users.findOne({ email: email});
     if(user){
-      const token = jwt.sign({_id : user._id,},process.env.SECRET_KEY );
+      const token = jwt.sign({_id : user._id,isAdmin:user.isAdmin},process.env.SECRET_KEY );
       user.tokens.push({ token });
       await user.save();
       const {password ,...rest} = user._doc;
@@ -24,7 +24,7 @@ const Google = async (req, res, next) =>{
         password: HashPassword,
       })
       
-      const token = jwt.sign({_id : newUser._id,},process.env.SECRET_KEY  );
+      const token = jwt.sign({_id : newUser._id,isAdmin:newUser.isAdmin},process.env.SECRET_KEY  );
       newUser.tokens.push({ token });
       await newUser.save();
       const {password ,...rest} = newUser._doc;

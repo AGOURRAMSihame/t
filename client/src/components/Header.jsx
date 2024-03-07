@@ -5,16 +5,31 @@ import { Avatar, Button, Dropdown, Navbar, TextInput } from 'flowbite-react';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { FaMoon, FaSun } from 'react-icons/fa';
 import { toggleTheme } from '../redux/theme/themeSlice';
-
+import {logoutSuccess} from '../redux/user/userSlice'
 
 const Header = () => {
   const { currentUser } = useSelector(state => state.user);
   const dispatch = useDispatch();
   const { theme } = useSelector((state) => state.theme);
 
-
+  const handleLogout = async () => {
+    try {
+      const res = await fetch('/logout',{
+        method: 'POST',
+      });
+      const data = await res.json();
+      if(!res.ok){
+        console.log(data.message);
+      }else{
+        dispatch(logoutSuccess());
+      }
+    }catch (err) {
+        console.log(err.message)
+    }
+  
+  }
   return (
-    <Navbar className={`border-b-2 bg-${theme}`}>
+    <Navbar className={`p-0 border-b-2 bg-${theme}`}>
 
       <Link
         to='/'
@@ -62,7 +77,7 @@ const Header = () => {
               <Dropdown.Item>Profile</Dropdown.Item>
             </Link>
             <Dropdown.Divider />
-            <Dropdown.Item >Log Out</Dropdown.Item>
+            <Dropdown.Item onClick={handleLogout}>Log Out</Dropdown.Item>
           </Dropdown>
         ) : (
           <div className='flex'>

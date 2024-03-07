@@ -10,40 +10,11 @@ import Register from './components/Register';
 import Dashboard from './components/Dashboard';
 import { Route, Routes } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute.jsx';
+import OnlyAdminProtectedRoute from './OnlyAdminProtectedRoute.jsx';
+import CreateArticle from './components/CreateArticle.jsx';
 
 
 function App() {
-  
-
-
-  // const isLoggedIn = async () => {
-  //   try {
-  //     const res = await fetch('/auth', {
-  //       method: "POST",
-  //       headers: {
-  //         Accept: "application/json",
-  //         "Content-Type": "application/json"
-  //       },
-  //       credentials: "include"
-  //     });
-
-  //     if (res.status === 200) {
-  //       setauth(true)
-
-  //     }
-  //     if (res.status === 401) {
-  //       setauth(false)
-
-  //     }
-
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   isLoggedIn();
-  // }, []);
 
   return (
     <>
@@ -58,6 +29,9 @@ function App() {
       
         <Route element={<ProtectedRoute />}>
           <Route path='/dashboard' element={<Dashboard />} />
+        </Route>
+        <Route element={<OnlyAdminProtectedRoute />}>
+          <Route path='/create-article' element={<CreateArticle />} />
         </Route>
 
       </Routes>
